@@ -127,3 +127,25 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# ignore all binaries
+lambda-pipeline/bin
+
+# ignore pyvenv
+pyvenv.cfg
+
+
+# notebooks
+*.ipynb
+
+# ignore post
+post.md
+
+lambda-pipeline/LICENSE
+lambda-pipeline/NOTICE
+lambda-pipeline/share/jupyter/kernels/python3/kernel.json
+lambda-pipeline/share/jupyter/kernels/python3/logo-32x32.png
+lambda-pipeline/share/jupyter/kernels/python3/logo-64x64.png
+lambda-pipeline/share/jupyter/kernels/python3/logo-svg.svg
+lambda-pipeline/share/man/man1/ipython.1
