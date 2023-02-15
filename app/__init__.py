@@ -41,6 +41,7 @@ def weather_collector(event, context):
     The data is then stored in a S3 bucket as a CSV file. Note you will need
     to create an openweathermap account and get an API key to use this function.
     """
+    print("weather collector function called")
     all_data = pd.DataFrame()
     cities = ['New York', 'Portland', 'Chicago', 'Seattle', 'Dallas']
     columns = ['temperature', 'humidity', 'description', 'city']
