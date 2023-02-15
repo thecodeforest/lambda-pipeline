@@ -18,10 +18,10 @@ def monitor(email_address: str, data: pd.DataFrame, **kwargs) -> None:
     response = sns.create_topic(Name='weather_pipeline_monitoring')
     topic_arn = response['TopicArn']
     # create an email subscription
-    sns.subscribe(TopicArn=topic_arn,
-                  Protocol='email',
-                  Endpoint=email_address
-                  )
+    # sns.subscribe(TopicArn=topic_arn,
+    #               Protocol='email',
+    #               Endpoint=email_address
+    #               )
     runtime_details = {'function_name': os.environ['AWS_LAMBDA_FUNCTION_NAME'],
                        'row_count': data.shape[0],
                        'column_count': data.shape[1]
