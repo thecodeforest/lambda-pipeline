@@ -37,10 +37,7 @@ jobs:
           docker push $ECR_REGISTRY/lambda-weather-img:latest
 
       - name: Deploy to AWS Lambda
-        uses:
-          aws-actions/aws-lambda-deploy@v1
-        with:
-          name: lambda-weather
-          image_uri: $ECR_REGISTRY/lambda-weather-img:latest
-          region: ${{ env.AWS_REGION }}
+        run: |
+          aws lambda update-function-code --function-name lambda-weather --image-uri $ECR_REGISTRY/lambda-weather-img:latest
+
         
