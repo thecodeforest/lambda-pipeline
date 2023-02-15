@@ -15,10 +15,9 @@ email_address = os.environ["EMAIL_ADDRESS"]
 
 def monitor(email_address: str, data: pd.DataFrame, **kwargs) -> None:
     sns = boto3.client('sns')
-    response = sns.create_topic(Name='weather_pipeline_monitoring')
-    topic_arn = response['TopicArn']
+    topic = sns.create_topic(Name='weather_pipeline_monitoring')
     # create an email subscription
-    # sns.subscribe(TopicArn=topic_arn,
+    # topic.subscribe(TopicArn=topic_arn,
     #               Protocol='email',
     #               Endpoint=email_address
     #               )
@@ -28,10 +27,9 @@ def monitor(email_address: str, data: pd.DataFrame, **kwargs) -> None:
                        }
     # add any additional details
     runtime_details.update(kwargs)
-    sns.publish(TopicArn=topic_arn,
-                Message=f"weather data collection completed successfully. {runtime_details}",
-                Subject='weather data collection status'
-                )
+    topic.publish(Message=f"weather data collection completed successfully. {runtime_details}",
+                  Subject='weather data collection status'
+                  )
 
 
 def weather_collector(event, context):
