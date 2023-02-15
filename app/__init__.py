@@ -13,8 +13,7 @@ openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
 email_address = os.environ["EMAIL_ADDRESS"]
 
 
-def monitor(email_address: str, data: pd.DataFrame) -> None:
-    print("monitoring function called")
+def monitor(email_address: str, data: pd.DataFrame, **kwargs) -> None:
     sns = boto3.client('sns')
     response = sns.create_topic(Name='weather_pipeline_monitoring')
     topic_arn = response['TopicArn']
@@ -24,12 +23,11 @@ def monitor(email_address: str, data: pd.DataFrame) -> None:
                   Endpoint=email_address
                   )
     runtime_details = {'function_name': os.environ['AWS_LAMBDA_FUNCTION_NAME'],
-                       'function_arn': os.environ['AWS_LAMBDA_FUNCTION_ARN'],
-                       'aws_lambda_function_execution_time': os.environ['AWS_LAMBDA_FUNCTION_EXECUTION_TIME'],
-                       'aws_lambda_function_execution_status': os.environ['AWS_LAMBDA_FUNCTION_EXECUTION_STATUS'],
                        'row_count': data.shape[0],
                        'column_count': data.shape[1]
                        }
+    # add any additional details
+    runtime_details.update(kwargs)
     sns.publish(TopicArn=topic_arn,
                 Message=f"weather data collection completed successfully. {runtime_details}",
                 Subject='weather data collection status'
@@ -41,7 +39,7 @@ def weather_collector(event, context):
     The data is then stored in a S3 bucket as a CSV file. Note you will need
     to create an openweathermap account and get an API key to use this function.
     """
-    print("weather collector function called")
+    start = datetime.now()
     all_data = pd.DataFrame()
     cities = ['New York', 'Portland', 'Chicago', 'Seattle', 'Dallas']
     columns = ['temperature', 'humidity', 'description', 'city']
@@ -63,5 +61,6 @@ def weather_collector(event, context):
                  path=f"s3://{output_bucket}/weather_data_{now}.csv",
                  index=False
                  )
-    # send monitoring message
-    monitor(email_address=email_address, data=all_data)
+    finish = datetime.now()
+    runtime = round((finish - start).total_seconds(), 1)
+    monitor(email_address, data=all_data, runtime=runtime)
