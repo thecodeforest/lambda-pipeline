@@ -13,23 +13,28 @@ openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
 email_address = os.environ["EMAIL_ADDRESS"]
 
 
-def monitor(email_address: str, data: pd.DataFrame, **kwargs) -> None:
+def monitor(data: pd.DataFrame, **kwargs) -> None:
     sns = boto3.client('sns')
-    topic = sns.create_topic(Name='weather_pipeline_monitoring')
-    # create an email subscription
-    # topic.subscribe(TopicArn=topic_arn,
-    #               Protocol='email',
-    #               Endpoint=email_address
-    #               )
+    response = sns.list_topics()
+    topics = response['Topics']
+    weather_topics = [
+        topic for topic in topics if 'weather' in topic['TopicArn']]
+    # ensure only a single topic is returned
+    if len(weather_topics) > 1:
+        raise ValueError(
+            f"More than one weather topic returned: {weather_topics}")
+    # topic = sns.create_topic(Name='weather_pipeline_monitoring')
     runtime_details = {'function_name': os.environ['AWS_LAMBDA_FUNCTION_NAME'],
                        'row_count': data.shape[0],
                        'column_count': data.shape[1]
                        }
+
     # add any additional details
     runtime_details.update(kwargs)
-    topic.publish(Message=f"weather data collection completed successfully. {runtime_details}",
-                  Subject='weather data collection status'
-                  )
+    sns.publish(TopicArn=weather_topics['TopicArn'],
+                Message=f"weather data collection completed successfully. {runtime_details}",
+                Subject='Weather Data Collection Status'
+                )
 
 
 def weather_collector(event, context):
@@ -61,4 +66,4 @@ def weather_collector(event, context):
                  )
     finish = datetime.now()
     runtime = round((finish - start).total_seconds(), 1)
-    monitor(email_address, data=all_data, runtime=runtime)
+    monitor(data=all_data, runtime=runtime)
