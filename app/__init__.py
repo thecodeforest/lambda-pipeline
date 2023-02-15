@@ -59,5 +59,6 @@ def weather_collector(event, context):
                  index=False
                  )
     finish = datetime.now()
-    runtime = round((finish - start).total_seconds(), 1)
-    monitor(data=all_data, topic_name="weather-pipeline-monitoring", runtime=runtime)
+    run_time = round((finish - start).total_seconds(), 1)
+    monitor(data=all_data, topic_name="weather-pipeline-monitoring",
+            run_time=run_time)
