@@ -1,0 +1,10 @@
+{
+    "FunctionName": "daily-weather",
+    "PackageType": "Image",
+    "Role": "arn:aws:iam::371410071971:role/lamba-weather-role",
+    "Code": {
+        "ImageUri": "371410071971.dkr.ecr.us-west-2.amazonaws.com/lambda-weather-img:latest"
+    },
+    "Timeout": 60,
+    "MemorySize": 256
+}

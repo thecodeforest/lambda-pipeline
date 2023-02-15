@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import pandas as pd
+import boto3
 import awswrangler as wr
 from utils.weather import (get_weather,
                            extract_weather_data,
@@ -9,14 +10,36 @@ from utils.weather import (get_weather,
 
 output_bucket = os.environ["OUTPUT_BUCKET"]
 openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
+email_address = os.environ["EMAIL_ADDRESS"]
+
+
+def monitor(email_address: str, data: pd.DataFrame) -> None:
+    sns = boto3.client('sns')
+    response = sns.create_topic(Name='weather_pipeline_monitoring')
+    topic_arn = response['TopicArn']
+    # create an email subscription
+    sns.subscribe(TopicArn=topic_arn,
+                  Protocol='email',
+                  Endpoint=email_address
+                  )
+    runtime_details = {'function_name': os.environ['AWS_LAMBDA_FUNCTION_NAME'],
+                       'function_arn': os.environ['AWS_LAMBDA_FUNCTION_ARN'],
+                       'aws_lambda_function_execution_time': os.environ['AWS_LAMBDA_FUNCTION_EXECUTION_TIME'],
+                       'aws_lambda_function_execution_status': os.environ['AWS_LAMBDA_FUNCTION_EXECUTION_STATUS'],
+                       'row_count': data.shape[0],
+                       'column_count': data.shape[1]
+                       }
+    sns.publish(TopicArn=topic_arn,
+                Message=f"weather data collection completed successfully. {runtime_details}",
+                Subject='weather data collection status'
+                )
 
 
 def weather_collector(event, context):
-    """Lambda function to retrieve weather data from openweathermap api. 
-    The data is then stored in a S3 bucket as a CSV file. Note you will need 
+    """Lambda function to retrieve weather data from openweathermap api.
+    The data is then stored in a S3 bucket as a CSV file. Note you will need
     to create an openweathermap account and get an API key to use this function.
     """
-
     all_data = pd.DataFrame()
     cities = ['New York', 'Portland', 'Chicago', 'Seattle', 'Dallas']
     columns = ['temperature', 'humidity', 'description', 'city']
@@ -38,3 +61,5 @@ def weather_collector(event, context):
                  path=f"s3://{output_bucket}/weather_data_{now}.csv",
                  index=False
                  )
+    # send monitoring message
+    monitor(email_address=email_address, data=all_data)
