@@ -10,28 +10,22 @@ from utils.weather import (get_weather,
 
 output_bucket = os.environ["OUTPUT_BUCKET"]
 openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
-email_address = os.environ["EMAIL_ADDRESS"]
 
 
-def monitor(data: pd.DataFrame, **kwargs) -> None:
+def monitor(data: pd.DataFrame, topic_name: str, run_time: float) -> None:
     sns = boto3.client('sns')
     response = sns.list_topics()
     topics = response['Topics']
-    weather_topics = [
-        topic for topic in topics if 'weather' in topic['TopicArn']]
-    # ensure only a single topic is returned
-    if len(weather_topics) > 1:
-        raise ValueError(
-            f"More than one weather topic returned: {weather_topics}")
-    # topic = sns.create_topic(Name='weather_pipeline_monitoring')
+    weather_topic = [
+        x for x in topics if x['TopicArn'].split(':')[-1] == topic_name]
+    if not weather_topic:
+        raise ValueError(f"Topic {topic_name} does not exist")
     runtime_details = {'function_name': os.environ['AWS_LAMBDA_FUNCTION_NAME'],
                        'row_count': data.shape[0],
-                       'column_count': data.shape[1]
+                       'column_count': data.shape[1],
+                       'runtime': run_time,
                        }
-
-    # add any additional details
-    runtime_details.update(kwargs)
-    sns.publish(TopicArn=weather_topics['TopicArn'],
+    sns.publish(TopicArn=weather_topic['TopicArn'],
                 Message=f"weather data collection completed successfully. {runtime_details}",
                 Subject='Weather Data Collection Status'
                 )
@@ -66,4 +60,4 @@ def weather_collector(event, context):
                  )
     finish = datetime.now()
     runtime = round((finish - start).total_seconds(), 1)
-    monitor(data=all_data, runtime=runtime)
+    monitor(data=all_data, topic_name="weather-pipeline-monitoring", runtime=runtime)
