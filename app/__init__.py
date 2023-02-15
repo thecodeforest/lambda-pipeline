@@ -14,6 +14,7 @@ email_address = os.environ["EMAIL_ADDRESS"]
 
 
 def monitor(email_address: str, data: pd.DataFrame) -> None:
+    print("monitoring function called")
     sns = boto3.client('sns')
     response = sns.create_topic(Name='weather_pipeline_monitoring')
     topic_arn = response['TopicArn']
