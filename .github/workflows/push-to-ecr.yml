@@ -43,6 +43,7 @@ jobs:
       - name: Test Lambda
         run: |
           aws lambda invoke --function-name daily-weather --payload '{}' output.json
+          cat output.json
           grep -q '"errorMessage"' output.json && exit
 
 

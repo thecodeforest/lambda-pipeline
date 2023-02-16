@@ -139,8 +139,6 @@ pyvenv.cfg
 # notebooks
 *.ipynb
 
-# ignore post
-post.md
 
 lambda-pipeline/LICENSE
 lambda-pipeline/NOTICE
