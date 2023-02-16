@@ -43,18 +43,5 @@ jobs:
       - name: Test Lambda
         run: |
           aws lambda invoke --function-name daily-weather-staging --payload '{}' output.json
-          echo "Output from Lambda:"
-          cat output.json
-# if the output contains an error message, exit with a non-zero status code otherwise the workflow will continue
-          
-          
-
-
-
-  # - name: Test Lambda
-  #   run: |
-  #     aws lambda invoke --function-name daily-weather --payload '{}' output.json
-  #     cat output.json
-  #     grep -q '"errorMessage"' output.json && exit
-
+          grep -q "null" output.json && echo "No errors found" || exit 1
 
