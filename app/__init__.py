@@ -18,7 +18,6 @@ openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
 with open(Path(__file__).parent / "conf.yaml") as f:
     conf = yaml.load(f, Loader=yaml.FullLoader)
 
-print(hi_there)
 
 def send_run_details(data: pd.DataFrame, topic_name: str, run_time: float, validation_flag: bool) -> None:
     sns = boto3.client('sns')
