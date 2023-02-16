@@ -36,22 +36,9 @@ jobs:
         run: |
           docker push $ECR_REGISTRY/lambda-weather-img:staging
 
-      - name: Create Lambda function for testing
-      # configure Timeout to 5 minutes
+      - name: Deploy to AWS Lambda
         run: |
-          aws lambda create-function \
-          --function-name daily-weather-staging \
-          --package-type Image \
-          --role "arn:aws:iam::371410071971:role/lamba-weather-role" \
-          --code ImageUri=$ECR_REGISTRY/lambda-weather-img:staging \
-          --timeout 30 \
-          --memory-size 128
-
-      - name: add environment variables
-        run: |
-          aws lambda update-function-configuration \
-          --function-name daily-weather-staging \
-          --environment Variables={OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }},EMAIL_ADDRESS=${{ secrets.EMAIL_ADDRESS }}}
+          aws lambda update-function-code --function-name daily-weather-staging --image-uri $ECR_REGISTRY/lambda-weather-img:staging
 
       - name: Test Lambda
         run: |
@@ -59,9 +46,7 @@ jobs:
           cat output.json
           grep -q '"errorMessage"' output.json && exit
 
-  # - name: Deploy to AWS Lambda
-  #   run: |
-  #     aws lambda update-function-code --function-name daily-weather --image-uri $ECR_REGISTRY/lambda-weather-img:latest
+
 
   # - name: Test Lambda
   #   run: |

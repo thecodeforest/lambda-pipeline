@@ -475,6 +475,21 @@ Then run the following to confirm that a new `.csv` file has been created in the
 ```shell
 aws s3 ls city-weather-data-bucket
 ```
+### now add your staging function
+```shell
+aws lambda create-function \
+--function-name daily-weather-staging \
+--package-type Image \
+--role "arn:aws:iam::371410071971:role/lamba-weather-role" \
+--code ImageUri=$ECR_REGISTRY/lambda-weather-img:staging \
+--timeout 30 \
+--memory-size 128
+
+aws lambda update-function-configuration \
+  --function-name daily-weather-staging \
+  --environment "Variables={OPENWEATHER_API_KEY=a277ef224a9c719e6334ee57a1d668f1,EMAIL_ADDRESS=dpuresearch1@gmail.com}"
+```
+
 
 And there you have it! Now that we've deployed and tested our lambda function, we'll need a way to run on a schedule for the purpose of collecting the weather each day. 
 
@@ -571,5 +586,4 @@ The next step is to make our new data accessible. For example, our weather data 
 
 fin
 
-
-$ aws ecr describe-repositories --repository-name  --query 'repositories[0].repositoryUri' --output text
+aws lambda update-function-configuration --function-name my-function --environment Variables={DB_NAME=mydb,DB_USER=myuser,DB_PASSWORD=mypass}
