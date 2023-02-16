@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from pathlib import Path
 import yaml
 import pandas as pd
 import boto3
@@ -12,6 +13,9 @@ from validation.validate_weather_data import validate_weather_df
 
 output_bucket = os.environ["OUTPUT_BUCKET"]
 openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
+
+print("Current Path")
+print(Path(__file__))
 
 with open("conf.yaml") as f:
     conf = yaml.load(f, Loader=yaml.FullLoader)
