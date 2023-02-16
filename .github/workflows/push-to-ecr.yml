@@ -41,7 +41,6 @@ jobs:
         run: |
           aws lambda create-function \
           --function-name daily-weather-staging \
-          --image-uri $ECR_REGISTRY/lambda-weather-img:staging \
           --package-type Image \
           --role "arn:aws:iam::371410071971:role/lamba-weather-role" \
           --code ImageUri=$ECR_REGISTRY/lambda-weather-img:staging \
