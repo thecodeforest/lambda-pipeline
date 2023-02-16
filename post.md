@@ -584,6 +584,3 @@ The next step is to make our new data accessible. For example, our weather data 
 
 ### Querying our source data with Athena
 
-fin
-
-aws lambda update-function-configuration --function-name my-function --environment Variables={DB_NAME=mydb,DB_USER=myuser,DB_PASSWORD=mypass}

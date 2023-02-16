@@ -18,7 +18,7 @@ openweather_api_key = os.environ["OPENWEATHER_API_KEY"]
 with open(Path(__file__).parent / "conf.yaml") as f:
     conf = yaml.load(f, Loader=yaml.FullLoader)
 
-print(gonna_break_it)
+
 def send_run_details(data: pd.DataFrame, topic_name: str, run_time: float, validation_flag: bool) -> None:
     sns = boto3.client('sns')
     response = sns.list_topics()
@@ -64,20 +64,21 @@ def weather_collector(event, context):
     # validate data
     is_valid, failure_cases = validate_weather_df(all_data)
     # save to s3
-    if is_valid:
-        now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        wr.s3.to_csv(df=all_data,
-                     path=f"s3://{output_bucket}/weather_data_{now}.csv",
-                     index=False
-                     )
-        finish = datetime.now()
-        run_time = round((finish - start).total_seconds(), 1)
-    else:
-        wr.s3.to_csv(df=failure_cases,
-                     path=f"s3://{output_bucket}/validation/weather_data_{now}.csv",
-                     index=False)
-    send_run_details(data=all_data,
-                     topic_name="weather-pipeline-monitoring",
-                     run_time=run_time,
-                     validation_flag=is_valid
-                     )
+    if 'staging' not in os.environ['AWS_LAMBDA_FUNCTION_NAME']:
+        if is_valid:
+            now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            wr.s3.to_csv(df=all_data,
+                         path=f"s3://{output_bucket}/weather_data_{now}.csv",
+                         index=False
+                         )
+            finish = datetime.now()
+            run_time = round((finish - start).total_seconds(), 1)
+        else:
+            wr.s3.to_csv(df=failure_cases,
+                         path=f"s3://{output_bucket}/validation/weather_data_{now}.csv",
+                         index=False)
+        send_run_details(data=all_data,
+                         topic_name="weather-pipeline-monitoring",
+                         run_time=run_time,
+                         validation_flag=is_valid
+                         )
