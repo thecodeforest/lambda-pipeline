@@ -43,5 +43,6 @@ jobs:
       - name: Test Lambda
         run: |
           aws lambda invoke --function-name daily-weather-staging --payload '{}' output.json
+          cat output.json
           grep -q "null" output.json && echo "No errors found" || exit 1
 
