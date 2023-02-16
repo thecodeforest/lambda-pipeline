@@ -45,7 +45,6 @@ jobs:
           aws lambda invoke --function-name daily-weather-staging --payload '{}' output.json
           echo "Output from Lambda:"
           cat output.json
-# check if the output contains an error message and exit if it does (this will fail the workflow)
           grep -q '"errorMessage"' output.json && exit
           
 

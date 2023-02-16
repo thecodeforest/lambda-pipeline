@@ -450,7 +450,7 @@ Now make a configuration file for the lambda function.
     "Code": {
         "ImageUri": "371410071971.dkr.ecr.us-west-2.amazonaws.com/lambda-weather-img:latest"
     },
-    "Timeout": 30,
+    "Timeout": 180,
     "MemorySize": 128
 }
 ```
@@ -482,7 +482,7 @@ aws lambda create-function \
 --package-type Image \
 --role "arn:aws:iam::371410071971:role/lamba-weather-role" \
 --code ImageUri=$ECR_REGISTRY/lambda-weather-img:staging \
---timeout 30 \
+--timeout 180 \
 --memory-size 128
 
 aws lambda update-function-configuration \
