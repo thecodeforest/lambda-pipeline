@@ -42,4 +42,5 @@ jobs:
 
       - name: Test Lambda
         run: |
-          aws lambda invoke --function-name daily-weather
+          aws lambda invoke --function-name daily-weather --payload '{}' output.json
+
