@@ -25,7 +25,7 @@ def monitor(data: pd.DataFrame, topic_name: str, run_time: float) -> None:
                        'column_count': data.shape[1],
                        'runtime': run_time,
                        }
-    sns.publish(TopicArn=weather_topic[0]['TopicArn'],
+    sns.publish(TopicArn=weather_topic[0].get('TopicArn'),
                 Message=f"weather data collection completed successfully. {runtime_details}",
                 Subject='Weather Data Collection Status'
                 )
