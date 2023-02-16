@@ -74,5 +74,5 @@ jobs:
 
       - name: Deploy to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name daily-weather-production --image-uri $ECR_REGISTRY/lambda-weather-img:production
+          aws lambda update-function-code --function-name daily-weather --image-uri $ECR_REGISTRY/lambda-weather-img:production
     
