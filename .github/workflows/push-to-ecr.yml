@@ -45,6 +45,7 @@ jobs:
           aws lambda invoke --function-name daily-weather-staging --payload '{}' output.json
           cat output.json
           grep -q '"errorMessage"' output.json && exit
+          
 
 
 

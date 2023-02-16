@@ -487,7 +487,7 @@ aws lambda create-function \
 
 aws lambda update-function-configuration \
   --function-name daily-weather-staging \
-  --environment "Variables={OPENWEATHER_API_KEY=a277ef224a9c719e6334ee57a1d668f1,EMAIL_ADDRESS=dpuresearch1@gmail.com}"
+  --environment "Variables={OPENWEATHER_API_KEY=XXXXXX,EMAIL_ADDRESS=XXXXX}"
 ```
 
 
