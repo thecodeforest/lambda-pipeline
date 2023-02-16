@@ -39,3 +39,8 @@ jobs:
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code --function-name daily-weather --image-uri $ECR_REGISTRY/lambda-weather-img:latest
+
+      - name: Test Lambda
+        run: |
+          aws lambda invoke --function-name daily-weather -output.txt
+          cat output.txt
