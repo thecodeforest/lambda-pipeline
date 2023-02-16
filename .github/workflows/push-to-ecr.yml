@@ -42,5 +42,4 @@ jobs:
 
       - name: Test Lambda
         run: |
-          aws lambda invoke --function-name daily-weather -output.txt
-          cat output.txt
+          aws lambda invoke --function-name daily-weather
