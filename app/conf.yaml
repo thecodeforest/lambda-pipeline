@@ -1,0 +1,2 @@
+# add array of citie
+cities: ['New York', 'Portland', 'Chicago', 'Seattle', 'Dallas']
