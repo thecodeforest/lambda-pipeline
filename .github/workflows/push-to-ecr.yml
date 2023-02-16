@@ -51,7 +51,7 @@ jobs:
         run: |
           aws lambda update-function-configuration \
           --function-name daily-weather-staging \
-          --environment Variables={OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}, EMAIL_ADDRESS=${{ secrets.EMAIL_ADDRESS }}}
+          --environment Variables={OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }},EMAIL_ADDRESS=${{ secrets.EMAIL_ADDRESS }}}
 
       - name: Test Lambda
         run: |
